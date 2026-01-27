@@ -1954,6 +1954,17 @@ section {
     margin: 0;
 }
 
+.cookie-popup__link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    transition: var(--transition-fast);
+}
+
+.cookie-popup__link:hover {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+}
+
 .cookie-popup__actions {
     display: flex;
     gap: var(--spacing-md);

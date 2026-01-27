@@ -653,19 +653,20 @@ function init2GISMap() {
     }
     
     try {
-        // Координати Москвы (примерные, можно заменить на точные)
+        // Координати Казанского переулка, д. 7/19, Москва
         // Формат: [долгота, широта]
+        const coordinates = [37.6149609, 55.7314007]; // Казанский пер., д. 7/19
         const map = new mapgl.Map('map', {
             key: '67949d2c-9089-4829-95d9-196b46ee87b1',
-            center: [37.6173, 55.7558], // Москва [долгота, широта]
-            zoom: 15,
+            center: coordinates,
+            zoom: 16,
         });
         
         // Чекаємо на завантаження карти перед додаванням маркера
         map.on('load', () => {
             // Додаємо маркер на карту
             new mapgl.Marker(map, {
-                coordinates: [37.6173, 55.7558],
+                coordinates: coordinates,
             });
             
             console.log('2GIS map initialized successfully');
