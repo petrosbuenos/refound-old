@@ -664,15 +664,15 @@ textarea.form__input {
 }
 
 .advantage-card--nopaid::after {
-    background-image: url('img/nopaid.png');
+    background-image: url('img/nopaid.webp');
 }
 
 .advantage-card--contract::after {
-    background-image: url('img/clearcontract.png');
+    background-image: url('img/clearcontract.webp');
 }
 
 .advantage-card--support::after {
-    background-image: url('img/soprov.png');
+    background-image: url('img/soprov.webp');
 }
 
 .advantage-card:hover::after {
@@ -1581,7 +1581,7 @@ section {
    Footer
    ============================================ */
 .footer {
-    background-image: url('img/futer.png');
+    background-image: url('img/futer.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
