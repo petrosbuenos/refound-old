@@ -299,123 +299,84 @@
                 <h2 class="section__title fade-in">Отзывы клиентов</h2>
                 
                 <div class="reviews__content">
-                    <!-- Карусель з відео (зліва) -->
-                    <div class="reviews__video-carousel">
-                        <div class="video-carousel__container">
-                            <button class="video-carousel__arrow video-carousel__arrow--prev" id="videoPrev" aria-label="Предыдущее видео">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M15 18l-6-6 6-6"/>
-                                </svg>
-                            </button>
-                            
-                            <div class="video-carousel__track" id="videoTrack">
-                                <div class="video-carousel__slide">
-                                    <div class="video-review-card fade-in" data-video-id="1">
-                                        <div class="video-review-card__preview">
-                                            <video class="video-review-card__preview-video" controls playsinline>
-                                                <source src="img/VID_20260127_113716.mp4" type="video/mp4">
-                                            </video>
-                                            <div class="video-review-card__play">
-                                                <svg width="48" height="48" viewBox="0 0 48 48" fill="white">
-                                                    <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.6)"/>
-                                                    <path d="M18 14l12 10-12 10z" fill="white"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <p class="video-review-card__name">Отзыв клиента</p>
-                                    </div>
-                                </div>
-                                <div class="video-carousel__slide">
-                                    <div class="video-review-card fade-in" data-video-id="2">
-                                        <div class="video-review-card__preview">
-                                            <div class="video-review-card__play">
-                                                <svg width="48" height="48" viewBox="0 0 48 48" fill="white">
-                                                    <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.6)"/>
-                                                    <path d="M18 14l12 10-12 10z" fill="white"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <p class="video-review-card__name">История успеха</p>
-                                    </div>
-                                </div>
-                                <div class="video-carousel__slide">
-                                    <div class="video-review-card fade-in" data-video-id="3">
-                                        <div class="video-review-card__preview">
-                                            <div class="video-review-card__play">
-                                                <svg width="48" height="48" viewBox="0 0 48 48" fill="white">
-                                                    <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.6)"/>
-                                                    <path d="M18 14l12 10-12 10z" fill="white"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <p class="video-review-card__name">Результат работы</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button class="video-carousel__arrow video-carousel__arrow--next" id="videoNext" aria-label="Следующее видео">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 18l6-6-6-6"/>
-                                </svg>
-                            </button>
-                        </div>
+                    <div class="reviews__carousel">
+                        <button class="reviews__arrow reviews__arrow--prev" id="reviewPrev" aria-label="Предыдущий отзыв">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
                         
-                        <div class="video-carousel__dots" id="videoDots"></div>
-                    </div>
-                    
-                    <!-- Текстові відгуки (справа) -->
-                    <div class="reviews__text-list">
-                        <div class="text-reviews__container">
+                        <div class="reviews__track" id="reviewTrack">
                             <div class="review-card fade-in">
+                                <div class="review-card__photo">
+                                    <img src="img/1rew.jpg" alt="Отзыв клиента" loading="lazy">
+                                </div>
                                 <div class="review-card__stars">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
                                 </div>
                                 <p class="review-card__text">"Профессиональная работа, все этапы были прозрачны. Вернули средства в полном объеме. Рекомендую!"</p>
                                 <p class="review-card__author">Иван К.</p>
                                 <p class="review-card__location">Москва</p>
                             </div>
                             <div class="review-card fade-in">
+                                <div class="review-card__photo">
+                                    <img src="img/2rew.jpg" alt="Отзыв клиента" loading="lazy">
+                                </div>
                                 <div class="review-card__stars">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
                                 </div>
                                 <p class="review-card__text">"Долго искал специалистов по возврату средств. Здесь все сделали быстро и качественно. Спасибо команде!"</p>
                                 <p class="review-card__author">Ольга М.</p>
                                 <p class="review-card__location">Санкт-Петербург</p>
                             </div>
                             <div class="review-card fade-in">
+                                <div class="review-card__photo">
+                                    <img src="img/3rew.jpeg" alt="Отзыв клиента" loading="lazy">
+                                </div>
                                 <div class="review-card__stars">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
                                 </div>
                                 <p class="review-card__text">"Честная оценка шансов с самого начала. Работали без предоплаты, что было важно. Результат превзошел ожидания."</p>
                                 <p class="review-card__author">Сергей В.</p>
                                 <p class="review-card__location">Екатеринбург</p>
                             </div>
                             <div class="review-card fade-in">
+                                <div class="review-card__photo">
+                                    <img src="img/4rew.jpeg" alt="Отзыв клиента" loading="lazy">
+                                </div>
                                 <div class="review-card__stars">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
+                                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#fbbf24"><path d="M10 0l2.4 7.3h7.6l-6.2 4.5 2.4 7.3L10 14.6l-6.2 4.5 2.4-7.3L0 7.3h7.6z"/></svg>
                                 </div>
                                 <p class="review-card__text">"Отличная команда профессионалов. Помогли вернуть деньги от недобросовестного брокера. Все четко и по делу."</p>
                                 <p class="review-card__author">Мария С.</p>
                                 <p class="review-card__location">Новосибирск</p>
                             </div>
                         </div>
+                        
+                        <button class="reviews__arrow reviews__arrow--next" id="reviewNext" aria-label="Следующий отзыв">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
                     </div>
+                    
+                    <div class="reviews__dots" id="reviewDots"></div>
                 </div>
             </div>
         </section>

@@ -117,95 +117,116 @@ timelineItems.forEach((item, index) => {
     }
 });
 
+
 // ============================================
-// Відео-карусель відгуків
+// Карусель відгуків
 // ============================================
 
-const videoTrack = document.getElementById('videoTrack');
-const videoPrev = document.getElementById('videoPrev');
-const videoNext = document.getElementById('videoNext');
-const videoDots = document.getElementById('videoDots');
-const videoSlides = document.querySelectorAll('.video-carousel__slide');
+const reviewTrack = document.getElementById('reviewTrack');
+const reviewPrev = document.getElementById('reviewPrev');
+const reviewNext = document.getElementById('reviewNext');
+const reviewDots = document.getElementById('reviewDots');
+const reviewCards = document.querySelectorAll('.reviews__track .review-card');
 
-let currentVideoSlide = 0;
+let currentReview = 0;
 
-// Створюємо dots для відео-каруселі
-if (videoSlides.length > 0 && videoDots) {
-    videoSlides.forEach((_, index) => {
+// Створюємо dots для каруселі
+if (reviewCards.length > 0 && reviewDots) {
+    reviewCards.forEach((_, index) => {
         const dot = document.createElement('button');
-        dot.className = 'video-carousel__dot' + (index === 0 ? ' active' : '');
-        dot.setAttribute('aria-label', `Перейти к видео ${index + 1}`);
-        dot.addEventListener('click', () => goToVideoSlide(index));
-        videoDots.appendChild(dot);
+        dot.className = 'reviews__dot' + (index === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Перейти к отзыву ${index + 1}`);
+        dot.addEventListener('click', () => goToReview(index));
+        reviewDots.appendChild(dot);
     });
 }
 
-function updateVideoSlider() {
-    if (videoTrack) {
-        videoTrack.scrollTo({
-            left: currentVideoSlide * videoTrack.offsetWidth,
+function updateReviewCarousel() {
+    if (reviewTrack) {
+        reviewTrack.scrollTo({
+            left: currentReview * reviewTrack.offsetWidth,
             behavior: 'smooth'
         });
     }
     
     // Оновлюємо dots
-    const dots = videoDots?.querySelectorAll('.video-carousel__dot');
+    const dots = reviewDots?.querySelectorAll('.reviews__dot');
     if (dots) {
         dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentVideoSlide);
+            dot.classList.toggle('active', index === currentReview);
         });
+    }
+    
+    // Оновлюємо видимість стрілок
+    if (reviewPrev) {
+        reviewPrev.style.opacity = currentReview === 0 ? '0.5' : '1';
+        reviewPrev.style.pointerEvents = currentReview === 0 ? 'none' : 'auto';
+    }
+    
+    if (reviewNext) {
+        reviewNext.style.opacity = currentReview === reviewCards.length - 1 ? '0.5' : '1';
+        reviewNext.style.pointerEvents = currentReview === reviewCards.length - 1 ? 'none' : 'auto';
     }
 }
 
-function goToVideoSlide(index) {
-    currentVideoSlide = index;
-    updateVideoSlider();
+function goToReview(index) {
+    currentReview = index;
+    updateReviewCarousel();
 }
 
-function nextVideoSlide() {
-    currentVideoSlide = (currentVideoSlide + 1) % videoSlides.length;
-    updateVideoSlider();
+function nextReview() {
+    if (currentReview < reviewCards.length - 1) {
+        currentReview++;
+        updateReviewCarousel();
+    }
 }
 
-function prevVideoSlide() {
-    currentVideoSlide = (currentVideoSlide - 1 + videoSlides.length) % videoSlides.length;
-    updateVideoSlider();
+function prevReview() {
+    if (currentReview > 0) {
+        currentReview--;
+        updateReviewCarousel();
+    }
 }
 
-if (videoNext) {
-    videoNext.addEventListener('click', nextVideoSlide);
+if (reviewNext) {
+    reviewNext.addEventListener('click', nextReview);
 }
 
-if (videoPrev) {
-    videoPrev.addEventListener('click', prevVideoSlide);
+if (reviewPrev) {
+    reviewPrev.addEventListener('click', prevReview);
 }
 
 // Swipe для мобільних пристроїв
-let videoTouchStartX = 0;
-let videoTouchEndX = 0;
+let reviewTouchStartX = 0;
+let reviewTouchEndX = 0;
 
-if (videoTrack) {
-    videoTrack.addEventListener('touchstart', (e) => {
-        videoTouchStartX = e.changedTouches[0].screenX;
+if (reviewTrack) {
+    reviewTrack.addEventListener('touchstart', (e) => {
+        reviewTouchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
 
-    videoTrack.addEventListener('touchend', (e) => {
-        videoTouchEndX = e.changedTouches[0].screenX;
-        handleVideoSwipe();
+    reviewTrack.addEventListener('touchend', (e) => {
+        reviewTouchEndX = e.changedTouches[0].screenX;
+        handleReviewSwipe();
     }, { passive: true });
 }
 
-function handleVideoSwipe() {
+function handleReviewSwipe() {
     const swipeThreshold = 50;
-    const diff = videoTouchStartX - videoTouchEndX;
+    const diff = reviewTouchStartX - reviewTouchEndX;
     
     if (Math.abs(diff) > swipeThreshold) {
         if (diff > 0) {
-            nextVideoSlide();
+            nextReview();
         } else {
-            prevVideoSlide();
+            prevReview();
         }
     }
+}
+
+// Ініціалізація при завантаженні
+if (reviewCards.length > 0) {
+    updateReviewCarousel();
 }
 
 // ============================================
@@ -264,41 +285,6 @@ function openJivoChat() {
         }, 5000);
     }
 }
-
-// Відео відтворення на картці
-const videoReviewCards = document.querySelectorAll('.video-review-card');
-
-videoReviewCards.forEach(card => {
-    const previewVideo = card.querySelector('.video-review-card__preview-video');
-    const playButton = card.querySelector('.video-review-card__play');
-    
-    if (previewVideo && playButton) {
-        // При кліку на кнопку play - відтворюємо відео
-        playButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            previewVideo.play();
-            playButton.style.display = 'none';
-        });
-        
-        // Коли відео починає відтворюватися, ховаємо кнопку play
-        previewVideo.addEventListener('play', () => {
-            playButton.style.display = 'none';
-        });
-        
-        // Коли відео зупиняється (пауза), показуємо кнопку play тільки якщо відео на початку
-        previewVideo.addEventListener('pause', () => {
-            if (previewVideo.currentTime === 0) {
-                playButton.style.display = 'flex';
-            }
-        });
-        
-        // Коли відео закінчується, показуємо кнопку play
-        previewVideo.addEventListener('ended', () => {
-            playButton.style.display = 'flex';
-        });
-    }
-});
 
 // ESC для закриття модалок
 document.addEventListener('keydown', (e) => {
