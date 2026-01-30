@@ -701,20 +701,29 @@ textarea.form__input {
     border-color: #ef4444;
 }
 
-.form__checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
+.form__agreement {
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
-    cursor: pointer;
     line-height: var(--line-height-relaxed);
+    text-align: center;
+    margin: 0;
 }
 
-.form__checkbox input {
-    margin-top: 0.125rem;
-    cursor: pointer;
-    flex-shrink: 0;
+.form__agreement .form__link {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+}
+
+.form__agreement .form__link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+    -webkit-text-fill-color: var(--color-gold);
+    background: none;
 }
 
 .form__link {
