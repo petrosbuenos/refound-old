@@ -467,13 +467,27 @@ function scrollToForm() {
     scrollToTarget(heroFormWrapper);
 }
 
-function scrollToContacts() {
+function scrollToContacts(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
     const contacts = document.getElementById('contacts');
-    scrollToTarget(contacts);
+    if (contacts) {
+        const headerHeight = getHeaderHeight();
+        const rect = contacts.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetPosition = rect.top + scrollTop - headerHeight;
+        
+        window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth'
+        });
+    }
 }
 
 if (headerCta) {
-    headerCta.addEventListener('click', scrollToForm);
+    headerCta.addEventListener('click', scrollToContacts);
 }
 
 if (heroCtaPrimary) {
