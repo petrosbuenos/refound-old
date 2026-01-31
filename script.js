@@ -95,7 +95,8 @@ const observer = new IntersectionObserver((entries) => {
                 setTimeout(() => {
                     entry.target.classList.add('visible');
                 }, 100);
-            } else if (entry.target.classList.contains('hero__form-wrapper')) {
+            } else if (entry.target.classList.contains('hero__form-wrapper') || 
+                       entry.target.classList.contains('contacts__form-wrapper')) {
                 setTimeout(() => {
                     entry.target.classList.add('visible');
                 }, 300);
@@ -107,7 +108,8 @@ const observer = new IntersectionObserver((entries) => {
             // Виключаємо hero елементи, щоб вони залишалися видимими
             const isHeroElement = entry.target.classList.contains('hero__text') || 
                                  entry.target.classList.contains('hero__form-wrapper') ||
-                                 entry.target.classList.contains('hero__image');
+                                 entry.target.classList.contains('hero__image') ||
+                                 entry.target.classList.contains('contacts__form-wrapper');
             
             if (scrollDirection === 'up' && entry.target.classList.contains('visible') && !isHeroElement) {
                 // При прокрутці вгору - приховуємо зі зворотною анімацією
@@ -426,7 +428,8 @@ if (document.readyState === 'loading') {
 // ============================================
 
 const heroForm = document.getElementById('heroForm');
-const forms = [heroForm, popupForm].filter(Boolean);
+const contactsForm = document.getElementById('contactsForm');
+const forms = [heroForm, popupForm, contactsForm].filter(Boolean);
 
 forms.forEach(form => {
     form?.addEventListener('submit', (e) => {
