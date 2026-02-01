@@ -100,6 +100,12 @@ const observer = new IntersectionObserver((entries) => {
                 setTimeout(() => {
                     entry.target.classList.add('visible');
                 }, 300);
+            } else if (entry.target.classList.contains('review-card')) {
+                // Поетапна анімація для карток відгуків
+                const index = Array.from(entry.target.parentElement.children).indexOf(entry.target);
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, index * 100);
             } else {
                 entry.target.classList.add('visible');
             }
@@ -161,34 +167,52 @@ if (reviewCards.length > 0 && reviewDots) {
 }
 
 function updateReviewCarousel() {
-    if (reviewTrack) {
+    if (!reviewTrack || reviewCards.length === 0) return;
+    
+    const cardWidth = reviewTrack.offsetWidth;
+    const targetScroll = currentReview * cardWidth;
+    
+    // Плавна прокрутка з перевіркою підтримки
+    if ('scrollBehavior' in document.documentElement.style) {
         reviewTrack.scrollTo({
-            left: currentReview * reviewTrack.offsetWidth,
+            left: targetScroll,
             behavior: 'smooth'
         });
+    } else {
+        // Fallback для старих браузерів
+        reviewTrack.scrollLeft = targetScroll;
     }
     
-    // Оновлюємо dots
+    // Оновлюємо dots з плавною анімацією
     const dots = reviewDots?.querySelectorAll('.reviews__dot');
     if (dots) {
         dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentReview);
+            if (index === currentReview) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
         });
     }
     
-    // Оновлюємо видимість стрілок
+    // Оновлюємо видимість стрілок з плавним переходом
     if (reviewPrev) {
-        reviewPrev.style.opacity = currentReview === 0 ? '0.5' : '1';
-        reviewPrev.style.pointerEvents = currentReview === 0 ? 'none' : 'auto';
+        const isFirst = currentReview === 0;
+        reviewPrev.style.opacity = isFirst ? '0.5' : '1';
+        reviewPrev.style.pointerEvents = isFirst ? 'none' : 'auto';
+        reviewPrev.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
     }
     
     if (reviewNext) {
-        reviewNext.style.opacity = currentReview === reviewCards.length - 1 ? '0.5' : '1';
-        reviewNext.style.pointerEvents = currentReview === reviewCards.length - 1 ? 'none' : 'auto';
+        const isLast = currentReview === reviewCards.length - 1;
+        reviewNext.style.opacity = isLast ? '0.5' : '1';
+        reviewNext.style.pointerEvents = isLast ? 'none' : 'auto';
+        reviewNext.setAttribute('aria-disabled', isLast ? 'true' : 'false');
     }
 }
 
 function goToReview(index) {
+    if (index < 0 || index >= reviewCards.length) return;
     currentReview = index;
     updateReviewCarousel();
 }
@@ -218,15 +242,23 @@ if (reviewPrev) {
 // Swipe для мобільних пристроїв
 let reviewTouchStartX = 0;
 let reviewTouchEndX = 0;
+let isReviewScrolling = false;
 
 if (reviewTrack) {
     reviewTrack.addEventListener('touchstart', (e) => {
         reviewTouchStartX = e.changedTouches[0].screenX;
+        isReviewScrolling = false;
+    }, { passive: true });
+
+    reviewTrack.addEventListener('touchmove', (e) => {
+        isReviewScrolling = true;
     }, { passive: true });
 
     reviewTrack.addEventListener('touchend', (e) => {
-        reviewTouchEndX = e.changedTouches[0].screenX;
-        handleReviewSwipe();
+        if (!isReviewScrolling) {
+            reviewTouchEndX = e.changedTouches[0].screenX;
+            handleReviewSwipe();
+        }
     }, { passive: true });
 }
 
@@ -241,6 +273,28 @@ function handleReviewSwipe() {
             prevReview();
         }
     }
+}
+
+// Обробка scroll для синхронізації
+if (reviewTrack) {
+    let scrollTimeout;
+    reviewTrack.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const cardWidth = reviewTrack.offsetWidth;
+            const scrollLeft = reviewTrack.scrollLeft;
+            const newIndex = Math.round(scrollLeft / cardWidth);
+            if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
+                currentReview = newIndex;
+                const dots = reviewDots?.querySelectorAll('.reviews__dot');
+                if (dots) {
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentReview);
+                    });
+                }
+            }
+        }, 100);
+    }, { passive: true });
 }
 
 // Ініціалізація при завантаженні
