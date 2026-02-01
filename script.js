@@ -98,16 +98,20 @@ let lastScrollY = 0;
 let scrollDirection = 'down';
 
 // Ініціалізуємо lastScrollY після завантаження сторінки
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+// Використовуємо подвійний requestAnimationFrame для гарантії готовності DOM
+const initScrollY = () => {
+    requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            lastScrollY = window.scrollY;
+            // Використовуємо pageYOffset замість scrollY для кращої сумісності
+            lastScrollY = window.pageYOffset || window.scrollY || 0;
         });
     });
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollY);
 } else {
-    requestAnimationFrame(() => {
-        lastScrollY = window.scrollY;
-    });
+    initScrollY();
 }
 
 window.addEventListener('scroll', () => {
@@ -250,45 +254,50 @@ function updateReviewCarousel() {
     const cardWidth = getCardWidth();
     const targetScroll = currentReview * cardWidth;
     
-    // Використовуємо requestAnimationFrame для batch операцій
+    // Використовуємо подвійний requestAnimationFrame для уникнення примусових перекомпонувань
     requestAnimationFrame(() => {
-        // Плавна прокрутка з перевіркою підтримки
-        if ('scrollBehavior' in document.documentElement.style) {
-            reviewTrack.scrollTo({
-                left: targetScroll,
-                behavior: 'smooth'
-            });
-        } else {
-            // Fallback для старих браузерів
-            reviewTrack.scrollLeft = targetScroll;
-        }
-        
-        // Оновлюємо dots з плавною анімацією
-        const dots = reviewDots?.querySelectorAll('.reviews__dot');
-        if (dots) {
-            dots.forEach((dot, index) => {
-                if (index === currentReview) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-        
-        // Оновлюємо видимість стрілок з плавним переходом
-        if (reviewPrev) {
-            const isFirst = currentReview === 0;
-            reviewPrev.style.opacity = isFirst ? '0.5' : '1';
-            reviewPrev.style.pointerEvents = isFirst ? 'none' : 'auto';
-            reviewPrev.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
-        }
-        
-        if (reviewNext) {
-            const isLast = currentReview === reviewCards.length - 1;
-            reviewNext.style.opacity = isLast ? '0.5' : '1';
-            reviewNext.style.pointerEvents = isLast ? 'none' : 'auto';
-            reviewNext.setAttribute('aria-disabled', isLast ? 'true' : 'false');
-        }
+        requestAnimationFrame(() => {
+            // Плавна прокрутка з перевіркою підтримки
+            // Використовуємо CSS scroll-behavior замість JS scrollTo для кращої продуктивності
+            if ('scrollBehavior' in document.documentElement.style) {
+                reviewTrack.scrollTo({
+                    left: targetScroll,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Fallback для старих браузерів - використовуємо requestAnimationFrame
+                requestAnimationFrame(() => {
+                    reviewTrack.scrollLeft = targetScroll;
+                });
+            }
+            
+            // Оновлюємо dots з плавною анімацією
+            const dots = reviewDots?.querySelectorAll('.reviews__dot');
+            if (dots) {
+                dots.forEach((dot, index) => {
+                    if (index === currentReview) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Оновлюємо видимість стрілок з плавним переходом
+            if (reviewPrev) {
+                const isFirst = currentReview === 0;
+                reviewPrev.style.opacity = isFirst ? '0.5' : '1';
+                reviewPrev.style.pointerEvents = isFirst ? 'none' : 'auto';
+                reviewPrev.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
+            }
+            
+            if (reviewNext) {
+                const isLast = currentReview === reviewCards.length - 1;
+                reviewNext.style.opacity = isLast ? '0.5' : '1';
+                reviewNext.style.pointerEvents = isLast ? 'none' : 'auto';
+                reviewNext.setAttribute('aria-disabled', isLast ? 'true' : 'false');
+            }
+        });
     });
 }
 
@@ -362,22 +371,26 @@ if (reviewTrack) {
     reviewTrack.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-            // Використовуємо кешовану ширину замість прямого читання
-            const cardWidth = getCardWidth();
-            const scrollLeft = reviewTrack.scrollLeft;
-            const newIndex = Math.round(scrollLeft / cardWidth);
-            if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
-                currentReview = newIndex;
-                // Використовуємо requestAnimationFrame для batch операцій
-                requestAnimationFrame(() => {
-                    const dots = reviewDots?.querySelectorAll('.reviews__dot');
-                    if (dots) {
-                        dots.forEach((dot, index) => {
-                            dot.classList.toggle('active', index === currentReview);
-                        });
-                    }
-                });
-            }
+            // Використовуємо requestAnimationFrame для читання геометричних властивостей
+            requestAnimationFrame(() => {
+                // Використовуємо кешовану ширину замість прямого читання
+                const cardWidth = getCardWidth();
+                // Читаємо scrollLeft в requestAnimationFrame для уникнення примусових перекомпонувань
+                const scrollLeft = reviewTrack.scrollLeft;
+                const newIndex = Math.round(scrollLeft / cardWidth);
+                if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
+                    currentReview = newIndex;
+                    // Використовуємо requestAnimationFrame для batch операцій
+                    requestAnimationFrame(() => {
+                        const dots = reviewDots?.querySelectorAll('.reviews__dot');
+                        if (dots) {
+                            dots.forEach((dot, index) => {
+                                dot.classList.toggle('active', index === currentReview);
+                            });
+                        }
+                    });
+                }
+            });
         }, 100);
     }, { passive: true });
 }
