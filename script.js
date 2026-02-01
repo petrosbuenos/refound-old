@@ -93,8 +93,22 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Відстеження напрямку прокрутки
-let lastScrollY = window.scrollY;
+// Ініціалізуємо після завантаження для уникнення примусових перекомпонувань
+let lastScrollY = 0;
 let scrollDirection = 'down';
+
+// Ініціалізуємо lastScrollY після завантаження сторінки
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+            lastScrollY = window.scrollY;
+        });
+    });
+} else {
+    requestAnimationFrame(() => {
+        lastScrollY = window.scrollY;
+    });
+}
 
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
@@ -195,8 +209,12 @@ function getCardWidth() {
     if (cachedCardWidth > 0 && reviewTrack) {
         return cachedCardWidth;
     }
-    if (reviewTrack) {
-        cachedCardWidth = reviewTrack.offsetWidth;
+    // Читаємо offsetWidth тільки якщо потрібно, і тільки в requestAnimationFrame
+    if (reviewTrack && cachedCardWidth === 0) {
+        // Використовуємо getBoundingClientRect як альтернативу offsetWidth
+        // або читаємо в requestAnimationFrame
+        const rect = reviewTrack.getBoundingClientRect();
+        cachedCardWidth = rect.width || reviewTrack.offsetWidth;
     }
     return cachedCardWidth;
 }
@@ -205,7 +223,10 @@ function getCardWidth() {
 if (reviewTrack) {
     if (typeof ResizeObserver !== 'undefined') {
         const resizeObserver = new ResizeObserver(() => {
-            cachedCardWidth = reviewTrack.offsetWidth;
+            // Використовуємо requestAnimationFrame для уникнення примусових перекомпонувань
+            requestAnimationFrame(() => {
+                cachedCardWidth = reviewTrack.offsetWidth;
+            });
         });
         resizeObserver.observe(reviewTrack);
     } else {
@@ -214,7 +235,9 @@ if (reviewTrack) {
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                cachedCardWidth = reviewTrack.offsetWidth;
+                requestAnimationFrame(() => {
+                    cachedCardWidth = reviewTrack.offsetWidth;
+                });
             }, 150);
         }, { passive: true });
     }
@@ -362,18 +385,24 @@ if (reviewTrack) {
 // Ініціалізація при завантаженні
 if (reviewCards.length > 0) {
     // Ініціалізуємо кеш ширини картки після завантаження
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
+    // Використовуємо подвійний requestAnimationFrame для гарантії готовності DOM
+    const initCarousel = () => {
+        requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                cachedCardWidth = reviewTrack?.offsetWidth || 0;
+                if (reviewTrack) {
+                    // Використовуємо getBoundingClientRect замість offsetWidth для менших перекомпонувань
+                    const rect = reviewTrack.getBoundingClientRect();
+                    cachedCardWidth = rect.width || 0;
+                }
                 updateReviewCarousel();
             });
         });
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCarousel);
     } else {
-        requestAnimationFrame(() => {
-            cachedCardWidth = reviewTrack?.offsetWidth || 0;
-            updateReviewCarousel();
-        });
+        initCarousel();
     }
 }
 
@@ -703,8 +732,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Перевірка підтримки основних функцій
     if (!window.IntersectionObserver) {
         // Fallback: показуємо всі елементи одразу
-        document.querySelectorAll('.fade-in').forEach(el => {
-            el.classList.add('visible');
+        // Використовуємо requestAnimationFrame для batch операцій
+        requestAnimationFrame(() => {
+            const fadeInElements = document.querySelectorAll('.fade-in');
+            fadeInElements.forEach(el => {
+                el.classList.add('visible');
+            });
         });
     }
     
