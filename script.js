@@ -40,9 +40,29 @@ if (burger && nav) {
 // Плавний скрол для всіх anchor-посилань
 // ============================================
 
+// Кешуємо висоту header для уникнення примусових перекомпонувань
+let cachedHeaderHeight = 0;
+
 function getHeaderHeight() {
-    return header?.offsetHeight || 0;
+    // Використовуємо кешоване значення, якщо воно є
+    if (cachedHeaderHeight > 0) {
+        return cachedHeaderHeight;
+    }
+    // Читаємо тільки якщо header існує
+    if (header) {
+        cachedHeaderHeight = header.offsetHeight || 0;
+    }
+    return cachedHeaderHeight;
 }
+
+// Оновлюємо кеш при зміні розміру вікна
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        cachedHeaderHeight = header?.offsetHeight || 0;
+    }, 150);
+}, { passive: true });
 
 function scrollToTarget(target) {
     if (!target) return;
@@ -102,7 +122,9 @@ const observer = new IntersectionObserver((entries) => {
                 }, 300);
             } else if (entry.target.classList.contains('review-card')) {
                 // Поетапна анімація для карток відгуків
-                const index = Array.from(entry.target.parentElement.children).indexOf(entry.target);
+                // Кешуємо parentElement для уникнення повторних запитів
+                const parent = entry.target.parentElement;
+                const index = parent ? Array.from(parent.children).indexOf(entry.target) : 0;
                 setTimeout(() => {
                     entry.target.classList.add('visible');
                 }, index * 100);
@@ -166,49 +188,85 @@ if (reviewCards.length > 0 && reviewDots) {
     });
 }
 
+// Кешуємо ширину картки для уникнення примусових перекомпонувань
+let cachedCardWidth = 0;
+
+function getCardWidth() {
+    if (cachedCardWidth > 0 && reviewTrack) {
+        return cachedCardWidth;
+    }
+    if (reviewTrack) {
+        cachedCardWidth = reviewTrack.offsetWidth;
+    }
+    return cachedCardWidth;
+}
+
+// Оновлюємо кеш при зміні розміру
+if (reviewTrack) {
+    if (typeof ResizeObserver !== 'undefined') {
+        const resizeObserver = new ResizeObserver(() => {
+            cachedCardWidth = reviewTrack.offsetWidth;
+        });
+        resizeObserver.observe(reviewTrack);
+    } else {
+        // Fallback для браузерів без ResizeObserver
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                cachedCardWidth = reviewTrack.offsetWidth;
+            }, 150);
+        }, { passive: true });
+    }
+}
+
 function updateReviewCarousel() {
     if (!reviewTrack || reviewCards.length === 0) return;
     
-    const cardWidth = reviewTrack.offsetWidth;
+    // Використовуємо кешовану ширину
+    const cardWidth = getCardWidth();
     const targetScroll = currentReview * cardWidth;
     
-    // Плавна прокрутка з перевіркою підтримки
-    if ('scrollBehavior' in document.documentElement.style) {
-        reviewTrack.scrollTo({
-            left: targetScroll,
-            behavior: 'smooth'
-        });
-    } else {
-        // Fallback для старих браузерів
-        reviewTrack.scrollLeft = targetScroll;
-    }
-    
-    // Оновлюємо dots з плавною анімацією
-    const dots = reviewDots?.querySelectorAll('.reviews__dot');
-    if (dots) {
-        dots.forEach((dot, index) => {
-            if (index === currentReview) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
-    }
-    
-    // Оновлюємо видимість стрілок з плавним переходом
-    if (reviewPrev) {
-        const isFirst = currentReview === 0;
-        reviewPrev.style.opacity = isFirst ? '0.5' : '1';
-        reviewPrev.style.pointerEvents = isFirst ? 'none' : 'auto';
-        reviewPrev.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
-    }
-    
-    if (reviewNext) {
-        const isLast = currentReview === reviewCards.length - 1;
-        reviewNext.style.opacity = isLast ? '0.5' : '1';
-        reviewNext.style.pointerEvents = isLast ? 'none' : 'auto';
-        reviewNext.setAttribute('aria-disabled', isLast ? 'true' : 'false');
-    }
+    // Використовуємо requestAnimationFrame для batch операцій
+    requestAnimationFrame(() => {
+        // Плавна прокрутка з перевіркою підтримки
+        if ('scrollBehavior' in document.documentElement.style) {
+            reviewTrack.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+        } else {
+            // Fallback для старих браузерів
+            reviewTrack.scrollLeft = targetScroll;
+        }
+        
+        // Оновлюємо dots з плавною анімацією
+        const dots = reviewDots?.querySelectorAll('.reviews__dot');
+        if (dots) {
+            dots.forEach((dot, index) => {
+                if (index === currentReview) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Оновлюємо видимість стрілок з плавним переходом
+        if (reviewPrev) {
+            const isFirst = currentReview === 0;
+            reviewPrev.style.opacity = isFirst ? '0.5' : '1';
+            reviewPrev.style.pointerEvents = isFirst ? 'none' : 'auto';
+            reviewPrev.setAttribute('aria-disabled', isFirst ? 'true' : 'false');
+        }
+        
+        if (reviewNext) {
+            const isLast = currentReview === reviewCards.length - 1;
+            reviewNext.style.opacity = isLast ? '0.5' : '1';
+            reviewNext.style.pointerEvents = isLast ? 'none' : 'auto';
+            reviewNext.setAttribute('aria-disabled', isLast ? 'true' : 'false');
+        }
+    });
 }
 
 function goToReview(index) {
@@ -281,17 +339,21 @@ if (reviewTrack) {
     reviewTrack.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-            const cardWidth = reviewTrack.offsetWidth;
+            // Використовуємо кешовану ширину замість прямого читання
+            const cardWidth = getCardWidth();
             const scrollLeft = reviewTrack.scrollLeft;
             const newIndex = Math.round(scrollLeft / cardWidth);
             if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
                 currentReview = newIndex;
-                const dots = reviewDots?.querySelectorAll('.reviews__dot');
-                if (dots) {
-                    dots.forEach((dot, index) => {
-                        dot.classList.toggle('active', index === currentReview);
-                    });
-                }
+                // Використовуємо requestAnimationFrame для batch операцій
+                requestAnimationFrame(() => {
+                    const dots = reviewDots?.querySelectorAll('.reviews__dot');
+                    if (dots) {
+                        dots.forEach((dot, index) => {
+                            dot.classList.toggle('active', index === currentReview);
+                        });
+                    }
+                });
             }
         }, 100);
     }, { passive: true });
@@ -299,7 +361,20 @@ if (reviewTrack) {
 
 // Ініціалізація при завантаженні
 if (reviewCards.length > 0) {
-    updateReviewCarousel();
+    // Ініціалізуємо кеш ширини картки після завантаження
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(() => {
+                cachedCardWidth = reviewTrack?.offsetWidth || 0;
+                updateReviewCarousel();
+            });
+        });
+    } else {
+        requestAnimationFrame(() => {
+            cachedCardWidth = reviewTrack?.offsetWidth || 0;
+            updateReviewCarousel();
+        });
+    }
 }
 
 // ============================================
@@ -528,14 +603,18 @@ function scrollToContacts(e) {
     }
     const contacts = document.getElementById('contacts');
     if (contacts) {
-        const headerHeight = getHeaderHeight();
-        const rect = contacts.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const targetPosition = rect.top + scrollTop - headerHeight;
-        
-        window.scrollTo({
-            top: Math.max(0, targetPosition),
-            behavior: 'smooth'
+        // Читаємо всі геометричні властивості одразу перед використанням
+        // для уникнення примусових перекомпонувань
+        requestAnimationFrame(() => {
+            const headerHeight = getHeaderHeight();
+            const rect = contacts.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetPosition = rect.top + scrollTop - headerHeight;
+            
+            window.scrollTo({
+                top: Math.max(0, targetPosition),
+                behavior: 'smooth'
+            });
         });
     }
 }
