@@ -809,11 +809,145 @@ function init2GISMap() {
                 coordinates: coordinates,
             });
             
+            // Додаємо доступні назви для кнопок карти
+            addAccessibilityLabels(mapContainer);
+            
             console.log('2GIS map initialized successfully');
         });
         
     } catch (error) {
         console.error('Error initializing 2GIS map:', error);
     }
+}
+
+// ============================================
+// Додавання доступних назв для кнопок та посилань карти 2GIS
+// ============================================
+
+function addAccessibilityLabels(mapContainer) {
+    if (!mapContainer) return;
+    
+    // Функція для додавання aria-label до кнопок
+    const addLabelsToButtons = () => {
+        const buttons = mapContainer.querySelectorAll('button[type="button"]');
+        buttons.forEach((button, index) => {
+            // Перевіряємо, чи кнопка вже має aria-label
+            if (!button.getAttribute('aria-label')) {
+                // Визначаємо тип кнопки за класами або позицією
+                const classes = button.className || '';
+                let label = '';
+                
+                // Спробуємо визначити тип кнопки за класами mapgl
+                if (classes.includes('mapgl')) {
+                    // Кнопки масштабування (zoom)
+                    if (classes.includes('zoom') || button.textContent === '+' || button.textContent === '−' || button.textContent === '-') {
+                        label = button.textContent === '+' || button.textContent.includes('+') 
+                            ? 'Увеличить масштаб карты' 
+                            : 'Уменьшить масштаб карты';
+                    }
+                    // Кнопки повороту
+                    else if (classes.includes('rotate') || classes.includes('compass')) {
+                        label = 'Повернуть карту';
+                    }
+                    // Кнопки навігації
+                    else if (classes.includes('navigation') || classes.includes('control')) {
+                        label = 'Элемент управления картой';
+                    }
+                    // Інші кнопки карти
+                    else {
+                        label = `Кнопка управления картой ${index + 1}`;
+                    }
+                } else {
+                    // Якщо не вдалося визначити тип, використовуємо загальну назву
+                    label = `Кнопка управления картой ${index + 1}`;
+                }
+                
+                if (label) {
+                    button.setAttribute('aria-label', label);
+                }
+            }
+        });
+    };
+    
+    // Функція для додавання aria-label до посилань без тексту
+    const addLabelsToLinks = () => {
+        const links = mapContainer.querySelectorAll('a');
+        links.forEach((link) => {
+            // Перевіряємо, чи посилання має текстовий вміст або aria-label
+            const hasText = link.textContent && link.textContent.trim().length > 0;
+            const hasAriaLabel = link.getAttribute('aria-label');
+            const hasImageWithAlt = link.querySelector('img[alt]');
+            
+            // Якщо посилання не має тексту, aria-label або зображення з alt
+            if (!hasText && !hasAriaLabel && !hasImageWithAlt) {
+                const href = link.getAttribute('href') || '';
+                let label = '';
+                
+                // Визначаємо тип посилання за href
+                if (href.includes('2gis.ru') || href.includes('link_api_map')) {
+                    label = 'Ссылка на сайт 2GIS (откроется в новой вкладке)';
+                } else if (href.includes('map')) {
+                    label = 'Ссылка на карту';
+                } else {
+                    label = 'Ссылка на внешний ресурс';
+                }
+                
+                if (label) {
+                    link.setAttribute('aria-label', label);
+                }
+            }
+        });
+    };
+    
+    // Функція для обробки всіх елементів
+    const addAllLabels = () => {
+        addLabelsToButtons();
+        addLabelsToLinks();
+    };
+    
+    // Спочатку додаємо labels до існуючих елементів
+    setTimeout(() => {
+        addAllLabels();
+    }, 500);
+    
+    // Використовуємо MutationObserver для відстеження нових елементів
+    const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) { // Element node
+                        if (node.tagName === 'BUTTON' || node.tagName === 'A' || 
+                            node.querySelector('button') || node.querySelector('a')) {
+                            shouldUpdate = true;
+                        }
+                    }
+                });
+            }
+        });
+        
+        if (shouldUpdate) {
+            // Використовуємо невелику затримку для того, щоб DOM встиг оновитися
+            setTimeout(() => {
+                addAllLabels();
+            }, 100);
+        }
+    });
+    
+    // Спостерігаємо за змінами в контейнері карти
+    observer.observe(mapContainer, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Також перевіряємо періодично (на випадок, якщо MutationObserver пропустить щось)
+    const intervalId = setInterval(() => {
+        addAllLabels();
+    }, 2000);
+    
+    // Зупиняємо інтервал через 30 секунд (після повного завантаження карти)
+    setTimeout(() => {
+        clearInterval(intervalId);
+    }, 30000);
 }
 
