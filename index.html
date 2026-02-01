@@ -7,11 +7,20 @@
     <link rel="canonical" href="https://oporaprava.com/">
     <meta property="og:url" content="https://oporaprava.com/">
     <title>Возврат средств | Опора Права</title>
+    
+    <!-- Preconnect для швидшого завантаження зовнішніх ресурсів -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://mapgl.2gis.com" crossorigin>
+    
+    <!-- Preload критичних ресурсів -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" as="style">
+    
+    <!-- Завантаження стилів - Google Fonts завантажується асинхронно -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://mapgl.2gis.com/api/js/v1"></script>
 </head>
 <body>
     <!-- Шапка -->
@@ -19,7 +28,7 @@
         <div class="container">
             <div class="header__content">
                 <div class="header__logo">
-                    <img src="img/logo.webp" alt="Опора Права" width="300" height="200" loading="eager">
+                    <img src="img/logo.webp" alt="Опора Права" width="300" height="200" loading="eager" fetchpriority="high">
                 </div>
                 
                 <nav class="nav" id="nav">
@@ -49,7 +58,7 @@
     <main id="main">
         <!-- Главное изображение на весь экран -->
         <div class="hero__image-fullscreen fade-in" id="heroImage">
-            <img src="img/main.webp" alt="Опора Права" loading="eager" id="heroImageImg">
+            <img src="img/main.webp" alt="Опора Права" loading="eager" fetchpriority="high" id="heroImageImg">
         </div>
         
         <section class="hero">
@@ -274,7 +283,7 @@
                 <div class="team__grid">
                     <div class="team-card fade-in">
                         <div class="team-card__avatar">
-                            <img src="img/loyer1.webp" alt="Корчак Александр Петрович" class="team-card__photo">
+                            <img src="img/loyer1.webp" alt="Корчак Александр Петрович" class="team-card__photo" loading="lazy">
                         </div>
                         <h3 class="team-card__name">Корчак Александр Петрович</h3>
                         <p class="team-card__role">Юрист-консультант</p>
@@ -282,7 +291,7 @@
                     </div>
                     <div class="team-card fade-in">
                         <div class="team-card__avatar">
-                            <img src="img/loyer2.webp" alt="Мадранян Роман Давидович" class="team-card__photo">
+                            <img src="img/loyer2.webp" alt="Мадранян Роман Давидович" class="team-card__photo" loading="lazy">
                         </div>
                         <h3 class="team-card__name">Мадранян Роман Давидович</h3>
                         <p class="team-card__role">Старший юрист</p>
@@ -290,7 +299,7 @@
                     </div>
                     <div class="team-card fade-in">
                         <div class="team-card__avatar">
-                            <img src="img/loyer3.webp" alt="Репникова Алена Викторовна" class="team-card__photo">
+                            <img src="img/loyer3.webp" alt="Репникова Алена Викторовна" class="team-card__photo" loading="lazy">
                         </div>
                         <h3 class="team-card__name">Репникова Алена Викторовна</h3>
                         <p class="team-card__role">Юрист</p>
@@ -298,7 +307,7 @@
                     </div>
                     <div class="team-card fade-in">
                         <div class="team-card__avatar">
-                            <img src="img/loyer4.webp" alt="Гуляева София Владиславовна" class="team-card__photo">
+                            <img src="img/loyer4.webp" alt="Гуляева София Владиславовна" class="team-card__photo" loading="lazy">
                         </div>
                         <h3 class="team-card__name">Гуляева София Владиславовна</h3>
                         <p class="team-card__role">Юрист-аналитик</p>
@@ -740,5 +749,7 @@
 
     <script src="script.js"></script>
     <script src="//code.jivo.ru/widget/tLQUwEPG1t" async></script>
+    <!-- 2GIS Map завантажується асинхронно після завантаження сторінки -->
+    <script src="https://mapgl.2gis.com/api/js/v1" defer></script>
 </body>
 </html>
