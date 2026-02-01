@@ -138,14 +138,18 @@ const observer = new IntersectionObserver((entries) => {
                 setTimeout(() => {
                     entry.target.classList.add('visible');
                 }, 300);
-            } else if (entry.target.classList.contains('review-card')) {
-                // Поетапна анімація для карток відгуків
-                // Кешуємо parentElement для уникнення повторних запитів
-                const parent = entry.target.parentElement;
-                const index = parent ? Array.from(parent.children).indexOf(entry.target) : 0;
-                setTimeout(() => {
+            } else if (entry.target.classList.contains('reviews__content')) {
+                // Плавна анімація для блоку відгуків
+                requestAnimationFrame(() => {
                     entry.target.classList.add('visible');
-                }, index * 100);
+                    // Анімуємо картки поетапно після появи блоку
+                    const reviewCards = entry.target.querySelectorAll('.review-card');
+                    reviewCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('review-card--animated');
+                        }, 200 + (index * 80));
+                    });
+                });
             } else {
                 entry.target.classList.add('visible');
             }
