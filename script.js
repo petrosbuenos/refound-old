@@ -634,13 +634,6 @@ forms.forEach(form => {
 // ============================================
 
 const headerCta = document.getElementById('headerCta');
-const heroCtaPrimary = document.getElementById('heroCtaPrimary');
-const heroCtaSecondary = document.getElementById('heroCtaSecondary');
-
-function scrollToForm() {
-    const heroFormWrapper = document.querySelector('.hero__form-wrapper');
-    scrollToTarget(heroFormWrapper);
-}
 
 function scrollToContacts(e) {
     if (e) {
@@ -667,16 +660,6 @@ function scrollToContacts(e) {
 
 if (headerCta) {
     headerCta.addEventListener('click', scrollToContacts);
-}
-
-if (heroCtaPrimary) {
-    heroCtaPrimary.addEventListener('click', scrollToForm);
-}
-
-if (heroCtaSecondary) {
-    heroCtaSecondary.addEventListener('click', () => {
-        openJivoChat();
-    });
 }
 
 // ============================================
