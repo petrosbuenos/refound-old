@@ -523,12 +523,13 @@ function closePopup() {
     }
 }
 
-// Показуємо попап через затримку
-setTimeout(() => {
-    if (shouldShowPopup()) {
-        showPopup();
-    }
-}, POPUP_DELAY);
+// ТИМЧАСОВО ВИМКНЕНО: Показуємо попап через затримку
+// Розкоментуйте наступні рядки, щоб увімкнути попап назад:
+// setTimeout(() => {
+//     if (shouldShowPopup()) {
+//         showPopup();
+//     }
+// }, POPUP_DELAY);
 
 if (popupClose) {
     popupClose.addEventListener('click', closePopup);
@@ -933,4 +934,3 @@ function addAccessibilityLabels(mapContainer) {
         clearInterval(intervalId);
     }, 30000);
 }
-
