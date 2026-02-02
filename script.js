@@ -57,9 +57,10 @@ if (burger && nav) {
         });
     });
 
-    // Close menu on overlay click
+    // Close menu on overlay click (тільки якщо клік був на overlay, а не на меню)
     nav.addEventListener('click', (e) => {
-        if (e.target === nav || e.target.classList.contains('nav')) {
+        // Перевіряємо, чи клік був на самому nav (overlay) або на елементі поза меню
+        if (e.target === nav) {
             closeNavMenu();
         }
     });
@@ -71,11 +72,22 @@ if (burger && nav) {
         }
     });
 
-    // Запобігаємо закриттю при кліку всередині меню
+    // Запобігаємо закриттю при кліку всередині меню (але не на посиланнях)
+    const navHeader = nav.querySelector('.nav__header');
     const navContent = nav.querySelector('.nav__list');
+    
+    if (navHeader) {
+        navHeader.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
     if (navContent) {
         navContent.addEventListener('click', (e) => {
-            e.stopPropagation();
+            // Дозволяємо закриття меню при кліку на посилання, але запобігаємо закриттю при кліку на сам список
+            if (!e.target.classList.contains('nav__link')) {
+                e.stopPropagation();
+            }
         });
     }
 }
