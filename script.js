@@ -820,19 +820,48 @@ document.addEventListener('DOMContentLoaded', () => {
     
     
     // Ініціалізація карти 2GIS (чекаємо на завантаження скрипта)
-    if (typeof mapgl !== 'undefined') {
-        init2GISMap();
-    } else {
-        // Чекаємо на завантаження скрипта 2GIS
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (typeof mapgl !== 'undefined') {
-                    init2GISMap();
-                } else {
-                    console.warn('2GIS MapGL script not loaded');
+    function checkAndInit2GIS() {
+        if (typeof mapgl !== 'undefined') {
+            init2GISMap();
+            return true;
+        }
+        return false;
+    }
+    
+    // Перевіряємо одразу
+    if (!checkAndInit2GIS()) {
+        // Якщо скрипт ще не завантажився, чекаємо на подію load
+        if (document.readyState === 'complete') {
+            // Якщо сторінка вже завантажена, чекаємо трохи більше
+            let attempts = 0;
+            const maxAttempts = 10;
+            const checkInterval = setInterval(() => {
+                attempts++;
+                if (checkAndInit2GIS() || attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    if (attempts >= maxAttempts && typeof mapgl === 'undefined') {
+                        // Тихо пропускаємо помилку, якщо карта не критична
+                        console.debug('2GIS MapGL script not available');
+                    }
                 }
-            }, 500);
-        });
+            }, 200);
+        } else {
+            // Чекаємо на завантаження сторінки
+            window.addEventListener('load', () => {
+                let attempts = 0;
+                const maxAttempts = 10;
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    if (checkAndInit2GIS() || attempts >= maxAttempts) {
+                        clearInterval(checkInterval);
+                        if (attempts >= maxAttempts && typeof mapgl === 'undefined') {
+                            // Тихо пропускаємо помилку, якщо карта не критична
+                            console.debug('2GIS MapGL script not available');
+                        }
+                    }
+                }, 200);
+            });
+        }
     }
 });
 
