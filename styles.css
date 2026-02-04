@@ -218,6 +218,18 @@
   .contacts__form{padding:var(--spacing-sm)}
   .map-container--compact{height:180px;min-height:180px}
 }
+.footer__messengers{margin-top:var(--spacing-md);padding:var(--spacing-md);background:rgba(255,255,255,0.08);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,0.15);box-shadow:0 2px 8px rgba(15,23,42,0.15);backdrop-filter:blur(4px)}
+.footer__messengers-title{font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:rgba(255,255,255,0.85);margin-bottom:var(--spacing-sm);font-weight:600}
+.footer__messengers-list{display:flex;gap:var(--spacing-sm);flex-wrap:wrap}
+.footer__messenger-link{display:inline-flex;align-items:center;gap:var(--spacing-xs);padding:0.5rem 0.75rem;background:rgba(10,14,39,0.25);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-md);color:var(--color-primary-contrast);text-decoration:none;font-size:var(--font-size-xs);font-weight:500;transition:var(--transition-base);box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.footer__messenger-link:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);transform:translateY(-1px)}
+.footer__messenger-link:active{transform:translateY(0)}
+.footer__messenger-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-full);background:rgba(255,255,255,0.85);color:var(--color-primary);flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.15)}
+.footer__messenger-link:nth-child(1) .footer__messenger-icon{color:#0088cc}
+.footer__messenger-link:nth-child(2) .footer__messenger-icon{color:#25d366}
+.footer__messenger-link:nth-child(3) .footer__messenger-icon{background:rgba(255,255,255,0.95);color:#1e4fa3}
+.footer__messenger-text{white-space:nowrap}
+@media (max-width:768px){.footer__messengers{padding:var(--spacing-sm)}.footer__messengers-list{flex-direction:column}.footer__messenger-link{width:100%;justify-content:center}}
 @media (max-width:768px) and (orientation:landscape){
   .hero__image-fullscreen{height:70vh;min-height:400px}
   .hero{padding:var(--spacing-lg) 0}
