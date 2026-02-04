@@ -6,6 +6,14 @@ const header = document.querySelector('.header');
 const heroImage = document.getElementById('heroImage');
 const heroImageImg = document.getElementById('heroImageImg');
 
+const runWhenIdle = (callback, timeout = 1500) => {
+    if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout });
+        return;
+    }
+    setTimeout(callback, 1);
+};
+
 function closeNavMenu() {
     if (burger && nav) {
         burger.classList.remove('active');
@@ -217,16 +225,6 @@ const reviewCards = document.querySelectorAll('.reviews__track .review-card');
 
 let currentReview = 0;
 
-if (reviewCards.length > 0 && reviewDots) {
-    reviewCards.forEach((_, index) => {
-        const dot = document.createElement('button');
-        dot.className = 'reviews__dot' + (index === 0 ? ' active' : '');
-        dot.setAttribute('aria-label', `Перейти к отзыву ${index + 1}`);
-        dot.addEventListener('click', () => goToReview(index));
-        reviewDots.appendChild(dot);
-    });
-}
-
 let cachedCardWidth = 0;
 
 function getCardWidth() {
@@ -238,27 +236,6 @@ function getCardWidth() {
         cachedCardWidth = rect.width || reviewTrack.offsetWidth;
     }
     return cachedCardWidth;
-}
-
-if (reviewTrack) {
-    if (typeof ResizeObserver !== 'undefined') {
-        const resizeObserver = new ResizeObserver(() => {
-            requestAnimationFrame(() => {
-                cachedCardWidth = reviewTrack.offsetWidth;
-            });
-        });
-        resizeObserver.observe(reviewTrack);
-    } else {
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                requestAnimationFrame(() => {
-                    cachedCardWidth = reviewTrack.offsetWidth;
-                });
-            }, 150);
-        }, { passive: true });
-    }
 }
 
 function updateReviewCarousel() {
@@ -328,35 +305,9 @@ function prevReview() {
     }
 }
 
-if (reviewNext) {
-    reviewNext.addEventListener('click', nextReview);
-}
-
-if (reviewPrev) {
-    reviewPrev.addEventListener('click', prevReview);
-}
-
 let reviewTouchStartX = 0;
 let reviewTouchEndX = 0;
 let isReviewScrolling = false;
-
-if (reviewTrack) {
-    reviewTrack.addEventListener('touchstart', (e) => {
-        reviewTouchStartX = e.changedTouches[0].screenX;
-        isReviewScrolling = false;
-    }, { passive: true });
-
-    reviewTrack.addEventListener('touchmove', (e) => {
-        isReviewScrolling = true;
-    }, { passive: true });
-
-    reviewTrack.addEventListener('touchend', (e) => {
-        if (!isReviewScrolling) {
-            reviewTouchEndX = e.changedTouches[0].screenX;
-            handleReviewSwipe();
-        }
-    }, { passive: true });
-}
 
 function handleReviewSwipe() {
     const swipeThreshold = 50;
@@ -371,79 +322,142 @@ function handleReviewSwipe() {
     }
 }
 
-if (reviewTrack) {
-    let scrollTimeout;
-    reviewTrack.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            requestAnimationFrame(() => {
-                const cardWidth = getCardWidth();
-                const scrollLeft = reviewTrack.scrollLeft;
-                const newIndex = Math.round(scrollLeft / cardWidth);
-                if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
-                    currentReview = newIndex;
-                    requestAnimationFrame(() => {
-                        const dots = reviewDots?.querySelectorAll('.reviews__dot');
-                        if (dots) {
-                            dots.forEach((dot, index) => {
-                                dot.classList.toggle('active', index === currentReview);
-                            });
-                        }
-                    });
-                }
-            });
-        }, 100);
-    }, { passive: true });
-}
-
-if (reviewCards.length > 0) {
-    const initCarousel = () => {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                if (reviewTrack) {
-                    const rect = reviewTrack.getBoundingClientRect();
-                    cachedCardWidth = rect.width || 0;
-                }
-                updateReviewCarousel();
-            });
+const initReviews = () => {
+    if (reviewCards.length > 0 && reviewDots) {
+        reviewCards.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.className = 'reviews__dot' + (index === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Перейти к отзыву ${index + 1}`);
+            dot.addEventListener('click', () => goToReview(index));
+            reviewDots.appendChild(dot);
         });
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initCarousel);
-    } else {
-        initCarousel();
     }
-}
 
-const faqQuestions = document.querySelectorAll('.faq__question');
+    if (reviewTrack) {
+        if (typeof ResizeObserver !== 'undefined') {
+            const resizeObserver = new ResizeObserver(() => {
+                requestAnimationFrame(() => {
+                    cachedCardWidth = reviewTrack.offsetWidth;
+                });
+            });
+            resizeObserver.observe(reviewTrack);
+        } else {
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        cachedCardWidth = reviewTrack.offsetWidth;
+                    });
+                }, 150);
+            }, { passive: true });
+        }
+    }
 
-faqQuestions.forEach(question => {
-    question.addEventListener('click', () => {
-        const item = question.closest('.faq__item');
-        const isExpanded = question.getAttribute('aria-expanded') === 'true';
-        
-        faqQuestions.forEach(q => {
-            if (q !== question) {
-                const otherItem = q.closest('.faq__item');
-                if (otherItem.classList.contains('active')) {
-                    q.setAttribute('aria-expanded', 'false');
-                    otherItem.classList.remove('active');
+    if (reviewNext) {
+        reviewNext.addEventListener('click', nextReview);
+    }
+
+    if (reviewPrev) {
+        reviewPrev.addEventListener('click', prevReview);
+    }
+
+    if (reviewTrack) {
+        reviewTrack.addEventListener('touchstart', (e) => {
+            reviewTouchStartX = e.changedTouches[0].screenX;
+            isReviewScrolling = false;
+        }, { passive: true });
+
+        reviewTrack.addEventListener('touchmove', () => {
+            isReviewScrolling = true;
+        }, { passive: true });
+
+        reviewTrack.addEventListener('touchend', (e) => {
+            if (!isReviewScrolling) {
+                reviewTouchEndX = e.changedTouches[0].screenX;
+                handleReviewSwipe();
+            }
+        }, { passive: true });
+    }
+
+    if (reviewTrack) {
+        let scrollTimeout;
+        reviewTrack.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                requestAnimationFrame(() => {
+                    const cardWidth = getCardWidth();
+                    const scrollLeft = reviewTrack.scrollLeft;
+                    const newIndex = Math.round(scrollLeft / cardWidth);
+                    if (newIndex !== currentReview && newIndex >= 0 && newIndex < reviewCards.length) {
+                        currentReview = newIndex;
+                        requestAnimationFrame(() => {
+                            const dots = reviewDots?.querySelectorAll('.reviews__dot');
+                            if (dots) {
+                                dots.forEach((dot, index) => {
+                                    dot.classList.toggle('active', index === currentReview);
+                                });
+                            }
+                        });
+                    }
+                });
+            }, 100);
+        }, { passive: true });
+    }
+
+    if (reviewCards.length > 0) {
+        const initCarousel = () => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (reviewTrack) {
+                        const rect = reviewTrack.getBoundingClientRect();
+                        cachedCardWidth = rect.width || 0;
+                    }
+                    updateReviewCarousel();
+                });
+            });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCarousel);
+        } else {
+            initCarousel();
+        }
+    }
+};
+
+const initFAQ = () => {
+    const faqQuestions = document.querySelectorAll('.faq__question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.closest('.faq__item');
+            const isExpanded = question.getAttribute('aria-expanded') === 'true';
+            
+            faqQuestions.forEach(q => {
+                if (q !== question) {
+                    const otherItem = q.closest('.faq__item');
+                    if (otherItem.classList.contains('active')) {
+                        q.setAttribute('aria-expanded', 'false');
+                        otherItem.classList.remove('active');
+                    }
                 }
+            });
+            
+            question.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+            item.classList.toggle('active', !isExpanded);
+        });
+        
+        question.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                question.click();
             }
         });
-        
-        question.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
-        item.classList.toggle('active', !isExpanded);
     });
-    
-    question.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            question.click();
-        }
-    });
-});
+};
+
+runWhenIdle(initReviews);
+runWhenIdle(initFAQ);
 
 function openJivoChat() {
     if (typeof jivo_api !== 'undefined') {
@@ -734,30 +748,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    
-    function checkAndInit2GIS() {
-        if (typeof mapgl !== 'undefined') {
-            init2GISMap();
-            return true;
+    runWhenIdle(() => {
+        function checkAndInit2GIS() {
+            if (typeof mapgl !== 'undefined') {
+                init2GISMap();
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
-    
-    if (!checkAndInit2GIS()) {
-        if (document.readyState === 'complete') {
-            let attempts = 0;
-            const maxAttempts = 10;
-            const checkInterval = setInterval(() => {
-                attempts++;
-                if (checkAndInit2GIS() || attempts >= maxAttempts) {
-                    clearInterval(checkInterval);
-                    if (attempts >= maxAttempts && typeof mapgl === 'undefined') {
-                        console.debug('2GIS MapGL script not available');
-                    }
-                }
-            }, 200);
-        } else {
-            window.addEventListener('load', () => {
+        
+        if (!checkAndInit2GIS()) {
+            if (document.readyState === 'complete') {
                 let attempts = 0;
                 const maxAttempts = 10;
                 const checkInterval = setInterval(() => {
@@ -769,9 +770,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }, 200);
-            });
+            } else {
+                window.addEventListener('load', () => {
+                    let attempts = 0;
+                    const maxAttempts = 10;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
+                        if (checkAndInit2GIS() || attempts >= maxAttempts) {
+                            clearInterval(checkInterval);
+                            if (attempts >= maxAttempts && typeof mapgl === 'undefined') {
+                                console.debug('2GIS MapGL script not available');
+                            }
+                        }
+                    }, 200);
+                });
+            }
         }
-    }
+    });
 });
 
 function init2GISMap() {
