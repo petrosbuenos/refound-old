@@ -632,7 +632,7 @@ function initTurnstile() {
             console.warn('Turnstile script did not load');
             document.querySelectorAll('.cf-turnstile').forEach((element) => {
                 if (!element.textContent) {
-                    element.textContent = 'Капча не завантажилась. Оновіть сторінку.';
+                    element.textContent = 'Капча не загрузилась. Обновите страницу';
                 }
                 element.classList.add('cf-turnstile--error');
             });
