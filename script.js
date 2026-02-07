@@ -582,7 +582,7 @@ const FORM_NOTICE_ID = 'formNotice';
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju4GaWJtLuDLmFkQtzdf9WO1cOtPMVqFmBkgXWG0joJaXRIMEEsetKpieA/exec';
 
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
-const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
+const TURNSTILE_SITE_KEY = '0x4AAAAAACYpewbuwIzI6YHjKgvoI1I7P2A';
 
 // Функція для отримання токену капчі з форми
 function getTurnstileToken(form) {
