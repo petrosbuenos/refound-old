@@ -581,6 +581,40 @@ const FORM_NOTICE_ID = 'formNotice';
 
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju4GaWJtLuDLmFkQtzdf9WO1cOtPMVqFmBkgXWG0joJaXRIMEEsetKpieA/exec';
 
+// Cloudflare Turnstile Site Key (замініть на свій ключ)
+const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
+
+// Функція для отримання токену капчі з форми
+function getTurnstileToken(form) {
+    const turnstileContainer = form.querySelector('.cf-turnstile');
+    if (!turnstileContainer) return null;
+    
+    const widgetId = turnstileContainer.getAttribute('data-widget-id');
+    if (!widgetId) return null;
+    
+    try {
+        return window.turnstile?.getResponse(widgetId) || null;
+    } catch (error) {
+        console.error('Turnstile error:', error);
+        return null;
+    }
+}
+
+// Функція для скидання капчі
+function resetTurnstile(form) {
+    const turnstileContainer = form.querySelector('.cf-turnstile');
+    if (!turnstileContainer) return;
+    
+    const widgetId = turnstileContainer.getAttribute('data-widget-id');
+    if (widgetId && window.turnstile) {
+        try {
+            window.turnstile.reset(widgetId);
+        } catch (error) {
+            console.error('Turnstile reset error:', error);
+        }
+    }
+}
+
 // Валідація полів форми
 const validators = {
     name: (value) => {
@@ -778,6 +812,17 @@ forms.forEach(form => {
             return;
         }
 
+        // Перевірка капчі перед відправкою
+        const turnstileToken = getTurnstileToken(form);
+        if (!turnstileToken) {
+            showFormNotice('Пожалуйста, подтвердите, что вы не робот', true);
+            const turnstileContainer = form.querySelector('.cf-turnstile');
+            if (turnstileContainer) {
+                turnstileContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
@@ -794,6 +839,7 @@ forms.forEach(form => {
             ...data,
             formSource,
             timestamp: new Date().toISOString(),
+            turnstileToken: turnstileToken,
         };
 
         // Блокуємо кнопку відправки
@@ -830,6 +876,9 @@ forms.forEach(form => {
             });
 
             form.reset();
+            
+            // Скидаємо капчу після успішної відправки
+            resetTurnstile(form);
         } catch (error) {
             console.error('Form submit error:', error);
             showFormNotice('Ошибка отправки формы. Пожалуйста, попробуйте еще раз.', true);

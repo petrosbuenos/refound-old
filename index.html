@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://mapgl.2gis.com" crossorigin>
+    <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
     
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" as="style">
     <link rel="preload" href="script.js" as="script">
@@ -22,6 +23,8 @@
     <link rel="stylesheet" href="styles.css?v=1.1">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <header class="header" id="header">
@@ -155,6 +158,9 @@
                                 <p class="form__agreement">
                                     Отправляя форму, вы соглашаетесь с нашими <a href="privacy.html" class="form__link" target="_blank">"Политикой конфиденциальности"</a> и <a href="terms.html" class="form__link" target="_blank">"Пользовательским соглашением"</a>.
                                 </p>
+                            </div>
+                            <div class="form__group">
+                                <div class="cf-turnstile" data-sitekey="0x4AAAAAACYpe5iZG3zFKbyk" data-theme="light" data-size="normal" id="heroForm-turnstile"></div>
                             </div>
                             <button type="submit" class="btn btn--primary btn--block">Отправить</button>
                         </form>
@@ -628,6 +634,9 @@
                                     Отправляя форму, вы соглашаетесь с нашими <a href="privacy.html" class="form__link" target="_blank">"Политикой конфиденциальности"</a> и <a href="terms.html" class="form__link" target="_blank">"Пользовательским соглашением"</a>.
                                 </p>
                             </div>
+                            <div class="form__group">
+                                <div class="cf-turnstile" data-sitekey="0x4AAAAAACYpe5iZG3zFKbyk" data-theme="light" data-size="normal" id="contactsForm-turnstile"></div>
+                            </div>
                             <button type="submit" class="btn btn--primary btn--block">Отправить</button>
                         </form>
                     </div>
@@ -786,6 +795,9 @@
                     <p class="form__agreement">
                         Отправляя форму, вы соглашаетесь с нашими <a href="privacy.html" class="form__link" target="_blank">"Политикой конфиденциальности"</a> и <a href="terms.html" class="form__link" target="_blank">"Пользовательским соглашением"</a>.
                     </p>
+                </div>
+                <div class="form__group">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACYpe5iZG3zFKbyk" data-theme="light" data-size="normal" id="popupForm-turnstile"></div>
                 </div>
                 <button type="submit" class="btn btn--primary btn--block">Отправить</button>
             </form>
