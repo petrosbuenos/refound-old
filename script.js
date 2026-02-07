@@ -598,7 +598,7 @@ function renderTurnstileWidgets() {
 
         const theme = element.getAttribute('data-theme') || 'light';
         const size = element.getAttribute('data-size') || 'normal';
-        const appearance = element.getAttribute('data-appearance') || 'always';
+        const appearance = element.getAttribute('data-appearance') || 'interaction-only';
 
         try {
             const widgetId = window.turnstile.render(element, {
