@@ -265,3 +265,8 @@
 .turnstile-error:not(:empty) { color: #dc2626; }
 .form__group--turnstile { padding-bottom: calc(1.5em + var(--spacing-xs)); position: relative; }
 .form__group--turnstile .turnstile-error { position: absolute; bottom: 0; left: 0; right: 0; margin-top: 0; }
+
+@media (max-width:768px){
+  .timeline__item{min-width:0}
+  .timeline__content{max-width:100%;min-width:0}
+}
