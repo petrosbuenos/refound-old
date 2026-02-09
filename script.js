@@ -584,6 +584,57 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
 const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
 
+const FIXED_CONVERSION_NAME = 'Lead_Opora_Prava';
+const FIXED_CONVERSION_VALUE = 1;
+const FIXED_CONVERSION_CURRENCY = '$';
+
+function getUrlParamCaseInsensitive(paramName) {
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of params.entries()) {
+        if (key.toLowerCase() === paramName.toLowerCase()) {
+            return value;
+        }
+    }
+    return '';
+}
+
+function getGclidFromUrl() {
+    return getUrlParamCaseInsensitive('gclid');
+}
+
+function pad2(value) {
+    return String(value).padStart(2, '0');
+}
+
+function formatDateTime(date) {
+    const year = date.getFullYear();
+    const month = pad2(date.getMonth() + 1);
+    const day = pad2(date.getDate());
+    const hours = pad2(date.getHours());
+    const minutes = pad2(date.getMinutes());
+    const seconds = pad2(date.getSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function getConversionTimeString() {
+    const now = new Date();
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const gtmPlusOneMs = utcMs + 60 * 60000;
+    const withExtraTwoMinutes = gtmPlusOneMs + 2 * 60000;
+    return formatDateTime(new Date(withExtraTwoMinutes));
+}
+
+function ensureHiddenInput(form, name, value) {
+    let input = form.querySelector(`input[name="${name}"]`);
+    if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        form.appendChild(input);
+    }
+    input.value = value;
+}
+
 function renderTurnstileWidgets() {
     if (!window.turnstile) return;
 
@@ -916,6 +967,11 @@ forms.forEach(form => {
             turnstileError.textContent = '';
         }
 
+        const gclidValue = getGclidFromUrl();
+        const conversionTime = getConversionTimeString();
+        ensureHiddenInput(form, 'GCLID', gclidValue);
+        ensureHiddenInput(form, 'conversion_time', conversionTime);
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
@@ -933,6 +989,11 @@ forms.forEach(form => {
             formSource,
             timestamp: new Date().toISOString(),
             turnstileToken: turnstileToken,
+            GCLID: gclidValue,
+            conversion_time: conversionTime,
+            'Conversion Name': FIXED_CONVERSION_NAME,
+            'Conversion Value': FIXED_CONVERSION_VALUE,
+            'Conversion Currency': FIXED_CONVERSION_CURRENCY,
         };
 
         // Блокуємо кнопку відправки
