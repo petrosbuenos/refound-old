@@ -585,9 +585,21 @@ const GCLID_STORAGE_KEY = 'refound_gclid';
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
 const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
 
-const FIXED_CONVERSION_NAME = 'Lead_Opora_Prava';
-const FIXED_CONVERSION_VALUE = 1;
-const FIXED_CONVERSION_CURRENCY = '$';
+const TRACKING_PARAMS = [
+    'gbraid',
+    'gad_campaignid',
+    'gad_adgroupid',
+    'gad_adid',
+    'gad_source',
+    'review',
+];
+
+const CONVERSION_PARAM_MAP = {
+    conversion_name: 'Conversion Name',
+    conversion_time: 'Conversion Time',
+    conversion_value: 'Conversion Value',
+    conversion_currency: 'Conversion Currency',
+};
 
 function getUrlParamCaseInsensitive(paramName) {
     const params = new URLSearchParams(window.location.search);
@@ -924,10 +936,26 @@ function showFormNotice(message, isError = false) {
         notice = document.createElement('div');
         notice.id = FORM_NOTICE_ID;
         notice.className = 'form-notice';
-        notice.setAttribute('role', 'status');
-        notice.setAttribute('aria-live', 'polite');
-        notice.innerHTML = '<span class="form-notice__text"></span>';
+        notice.innerHTML = `
+            <div class="form-notice__overlay" data-form-notice-close></div>
+            <div class="form-notice__content" role="status" aria-live="polite">
+                <button type="button" class="form-notice__close" aria-label="Закрыть уведомление">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 5L5 15M5 5l10 10"/>
+                    </svg>
+                </button>
+                <span class="form-notice__text"></span>
+            </div>
+        `;
         document.body.appendChild(notice);
+
+        const closeTriggers = notice.querySelectorAll('[data-form-notice-close], .form-notice__close');
+        closeTriggers.forEach((trigger) => {
+            trigger.addEventListener('click', () => {
+                notice.classList.remove('form-notice--visible');
+                window.clearTimeout(notice._hideTimer);
+            });
+        });
     }
 
     const textEl = notice.querySelector('.form-notice__text');
@@ -974,13 +1002,22 @@ forms.forEach(form => {
         }
 
         const gclidValue = getGclidFromUrl();
-        const conversionTime = getConversionTimeString();
-        ensureHiddenInput(form, 'GCLID', gclidValue);
         ensureHiddenInput(form, 'gclid', gclidValue);
-        ensureHiddenInput(form, 'conversion_time', conversionTime);
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+
+        const trackingPayload = {
+            'Google Click ID': gclidValue,
+        };
+
+        TRACKING_PARAMS.forEach((param) => {
+            trackingPayload[param] = getUrlParamCaseInsensitive(param);
+        });
+
+        Object.entries(CONVERSION_PARAM_MAP).forEach(([paramName, payloadKey]) => {
+            trackingPayload[payloadKey] = getUrlParamCaseInsensitive(paramName);
+        });
 
         let formSource = 'unknown';
         if (form === heroForm) {
@@ -996,12 +1033,8 @@ forms.forEach(form => {
             formSource,
             timestamp: new Date().toISOString(),
             turnstileToken: turnstileToken,
-            GCLID: gclidValue,
             gclid: gclidValue,
-            conversion_time: conversionTime,
-            'Conversion Name': FIXED_CONVERSION_NAME,
-            'Conversion Value': FIXED_CONVERSION_VALUE,
-            'Conversion Currency': FIXED_CONVERSION_CURRENCY,
+            ...trackingPayload,
         };
 
         // Блокуємо кнопку відправки
