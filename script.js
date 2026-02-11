@@ -1,3 +1,4 @@
+/** oporaprava-yr.com */
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
 const navClose = document.getElementById('navClose');
@@ -577,7 +578,7 @@ if (document.readyState === 'loading') {
 const heroForm = document.getElementById('heroForm');
 const contactsForm = document.getElementById('contactsForm');
 const forms = [heroForm, popupForm, contactsForm].filter(Boolean);
-const FORM_NOTICE_ID = 'formNotice';
+const FORM_NOTICE_ID = 'oporapravaYrFormNotice';
 const phoneInputs = document.querySelectorAll('input[name="phone"]');
 const phoneInstances = new Map();
 
@@ -808,34 +809,34 @@ function showTurnstileError(form, message) {
 const validators = {
     name: (value) => {
         if (!value || value.trim().length === 0) {
-            return 'Поле "Имя" обязательно для заполнения';
+            return 'Укажите, пожалуйста, имя';
         }
         if (value.trim().length < 2) {
-            return 'Имя должно содержать минимум 2 символа';
+            return 'Имя — не менее 2 символов';
         }
         if (value.trim().length > 50) {
-            return 'Имя не должно превышать 50 символов';
+            return 'Имя — не более 50 символов';
         }
         if (!/^[а-яА-ЯёЁa-zA-Z\s\-']+$/u.test(value.trim())) {
-            return 'Имя может содержать только буквы, пробелы, дефисы и апострофы';
+            return 'В имени допускаются только буквы, пробелы, дефис и апостроф';
         }
         return '';
     },
     phone: (value) => {
         if (!value || value.trim().length === 0) {
-            return 'Поле "Телефон" обязательно для заполнения';
+            return 'Укажите, пожалуйста, номер телефона';
         }
         // Видаляємо всі нецифрові символи для перевірки
         const digitsOnly = value.replace(/\D/g, '');
         if (digitsOnly.length < 10) {
-            return 'Телефон должен содержать минимум 10 цифр';
+            return 'Номер — не менее 10 цифр';
         }
         if (digitsOnly.length > 15) {
-            return 'Телефон не должен превышать 15 цифр';
+            return 'Номер — не более 15 цифр';
         }
         // Перевірка формату (може починатися з +, містити дужки, пробіли, дефіси)
         if (!/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}[-\s\.]?[0-9]{1,9}$/im.test(value.trim())) {
-            return 'Введите корректный номер телефона';
+            return 'Введите номер в правильном формате';
         }
         return '';
     },
@@ -845,10 +846,10 @@ const validators = {
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value.trim())) {
-            return 'Введите корректный email адрес';
+            return 'Введите email в правильном формате';
         }
         if (value.trim().length > 100) {
-            return 'Email не должен превышать 100 символов';
+            return 'Email — не более 100 символов';
         }
         return '';
     },
@@ -857,7 +858,7 @@ const validators = {
             return ''; // Повідомлення не обов'язкове поле
         }
         if (value.trim().length > 1000) {
-            return 'Сообщение не должно превышать 1000 символов';
+            return 'Сообщение — не более 1000 символов';
         }
         return '';
     }
@@ -979,9 +980,9 @@ function showFormNotice(message, isError = false) {
         notice.id = FORM_NOTICE_ID;
         notice.className = 'form-notice';
         notice.innerHTML = `
-            <div class="form-notice__overlay" data-form-notice-close></div>
+            <div class="form-notice__overlay" data-oporaprava-yr-dismiss></div>
             <div class="form-notice__content" role="status" aria-live="polite">
-                <button type="button" class="form-notice__close" aria-label="Закрыть уведомление">
+                <button type="button" class="form-notice__close" aria-label="Закрыть">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 5L5 15M5 5l10 10"/>
                     </svg>
@@ -991,7 +992,7 @@ function showFormNotice(message, isError = false) {
         `;
         document.body.appendChild(notice);
 
-        const closeTriggers = notice.querySelectorAll('[data-form-notice-close], .form-notice__close');
+        const closeTriggers = notice.querySelectorAll('[data-oporaprava-yr-dismiss], .form-notice__close');
         closeTriggers.forEach((trigger) => {
             trigger.addEventListener('click', () => {
                 notice.classList.remove('form-notice--visible');
@@ -1026,14 +1027,14 @@ forms.forEach(form => {
                 firstError.focus();
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            showFormNotice('Пожалуйста, исправьте ошибки в форме', true);
+            showFormNotice('Исправьте, пожалуйста, допущенные в форме ошибки', true);
             return;
         }
 
         // Перевірка капчі перед відправкою
         const turnstileToken = getTurnstileToken(form);
         if (!turnstileToken) {
-            showTurnstileError(form, 'Пожалуйста, подтвердите, что вы не робот');
+            showTurnstileError(form, 'Подтвердите, что вы не робот');
             return;
         }
         
@@ -1109,7 +1110,7 @@ forms.forEach(form => {
         const originalButtonText = submitButton?.textContent;
         if (submitButton) {
             submitButton.disabled = true;
-            submitButton.textContent = 'Отправка...';
+            submitButton.textContent = 'Отправляем...';
         }
 
         try {
@@ -1132,7 +1133,7 @@ forms.forEach(form => {
                 conversion_currency: trackingPayload['Conversion Currency'],
             });
 
-            showFormNotice('Спасибо! Мы свяжемся с вами в ближайшее время.');
+            showFormNotice('Благодарим! Мы свяжемся с вами в ближайшее время.');
 
             if (form === popupForm) {
                 closePopup();
@@ -1159,7 +1160,7 @@ forms.forEach(form => {
             resetTurnstile(form);
         } catch (error) {
             console.error('Form submit error:', error);
-            showFormNotice('Ошибка отправки формы. Пожалуйста, попробуйте еще раз.', true);
+            showFormNotice('Ошибка при отправке. Попробуйте, пожалуйста, ещё раз.', true);
         } finally {
             // Розблоковуємо кнопку відправки
             if (submitButton) {
