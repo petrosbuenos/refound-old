@@ -663,7 +663,7 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju
 const GCLID_STORAGE_KEY = 'opora_prava_gclid';
 
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
-const TURNSTILE_SITE_KEY = '0x4AAAAAACaqyi_RS1Uxp8_i';
+const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
 
 const TRACKING_PARAMS = [
     'gbraid',
