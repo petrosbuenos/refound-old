@@ -123,16 +123,93 @@ function scrollToTarget(target) {
     });
 }
 
+const pathToSection = {
+    '/': '#main',
+    '/glavnaya': '#main',
+    '/uslugi': '#services',
+    '/komanda': '#team',
+    '/etapy-vozvrata': '#stages',
+    '/otzyvy': '#reviews',
+    '/faq': '#faq',
+    '/kontakty': '#contacts'
+};
+
+const sectionToPath = {
+    'main': '/glavnaya',
+    'services': '/uslugi',
+    'team': '/komanda',
+    'stages': '/etapy-vozvrata',
+    'reviews': '/otzyvy',
+    'faq': '/faq',
+    'contacts': '/kontakty'
+};
+
+function getSectionFromPath(pathname) {
+    const path = pathname.replace(/\/$/, '') || '/';
+    return pathToSection[path];
+}
+
+function scrollToSectionByPath(pathname) {
+    const selector = getSectionFromPath(pathname);
+    if (selector) {
+        const target = document.querySelector(selector);
+        scrollToTarget(target);
+    }
+}
+
+function handleSectionLinkClick(e) {
+    const href = this.getAttribute('href');
+    if (!href) return;
+    let pathname = href;
+    let selector = null;
+    if (href.startsWith('#')) {
+        if (href === '#' || href.length <= 1) return;
+        selector = href;
+        const sectionId = href.slice(1);
+        pathname = sectionToPath[sectionId] || '/';
+    } else if (href.startsWith('/')) {
+        pathname = href.split('?')[0].replace(/\/$/, '') || '/';
+        selector = pathToSection[pathname];
+    }
+    if (selector && document.querySelector(selector)) {
+        e.preventDefault();
+        scrollToTarget(document.querySelector(selector));
+        history.pushState({ path: pathname }, '', pathname);
+    }
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#' && href.length > 1) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            scrollToTarget(target);
-        }
-    });
+    anchor.addEventListener('click', handleSectionLinkClick);
 });
+
+document.querySelectorAll('.nav__link, .footer__link').forEach(anchor => {
+    const href = anchor.getAttribute('href');
+    if (href && href.startsWith('/')) {
+        const path = href.split('?')[0].replace(/\/$/, '') || '/';
+        if (pathToSection[path]) {
+            anchor.addEventListener('click', handleSectionLinkClick);
+        }
+    }
+});
+
+window.addEventListener('popstate', () => {
+    scrollToSectionByPath(window.location.pathname);
+});
+
+function initSectionFromUrl() {
+    const pathname = window.location.pathname;
+    if (getSectionFromPath(pathname)) {
+        requestAnimationFrame(() => {
+            scrollToSectionByPath(pathname);
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSectionFromUrl);
+} else {
+    initSectionFromUrl();
+}
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
