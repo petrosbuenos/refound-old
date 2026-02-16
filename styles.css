@@ -1,4 +1,4 @@
-/* oporaprava-yr.com */
+/* opora-prava.com */
 .form-notice{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:3000;transition:opacity 0.25s ease}
 .form-notice--visible{opacity:1;pointer-events:auto}
 .form-notice__overlay{position:absolute;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}

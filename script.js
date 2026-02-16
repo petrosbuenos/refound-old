@@ -1,4 +1,4 @@
-/** oporaprava-yr.com */
+/** opora-prava.com */
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
 const navClose = document.getElementById('navClose');
@@ -564,7 +564,7 @@ const popup = document.getElementById('popup');
 const popupClose = document.getElementById('popupClose');
 const popupForm = document.getElementById('popupForm');
 
-const POPUP_STORAGE_KEY = 'oporaprava_yr_popup_shown';
+const POPUP_STORAGE_KEY = 'opora_prava_popup_shown';
 const POPUP_DELAY = 30000;
 const POPUP_COOLDOWN = 24 * 60 * 60 * 1000;
 
@@ -608,7 +608,7 @@ const cookiePopup = document.getElementById('cookiePopup');
 const cookieAccept = document.getElementById('cookieAccept');
 const cookieReject = document.getElementById('cookieReject');
 
-const COOKIE_CONSENT_KEY = 'oporaprava_yr_cookie_consent';
+const COOKIE_CONSENT_KEY = 'opora_prava_cookie_consent';
 
 function hasCookieConsent() {
     return localStorage.getItem(COOKIE_CONSENT_KEY) !== null;
@@ -655,12 +655,12 @@ if (document.readyState === 'loading') {
 const heroForm = document.getElementById('heroForm');
 const contactsForm = document.getElementById('contactsForm');
 const forms = [heroForm, popupForm, contactsForm].filter(Boolean);
-const FORM_NOTICE_ID = 'oporapravaYrFormNotice';
+const FORM_NOTICE_ID = 'oporaPravaFormNotice';
 const phoneInputs = document.querySelectorAll('input[name="phone"]');
 const phoneInstances = new Map();
 
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju4GaWJtLuDLmFkQtzdf9WO1cOtPMVqFmBkgXWG0joJaXRIMEEsetKpieA/exec';
-const GCLID_STORAGE_KEY = 'oporaprava_yr_gclid';
+const GCLID_STORAGE_KEY = 'opora_prava_gclid';
 
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
 const TURNSTILE_SITE_KEY = '0x4AAAAAACaqyi_RS1Uxp8_i';
@@ -1057,7 +1057,7 @@ function showFormNotice(message, isError = false) {
         notice.id = FORM_NOTICE_ID;
         notice.className = 'form-notice';
         notice.innerHTML = `
-            <div class="form-notice__overlay" data-oporaprava-yr-dismiss></div>
+            <div class="form-notice__overlay" data-opora-prava-dismiss></div>
             <div class="form-notice__content" role="status" aria-live="polite">
                 <button type="button" class="form-notice__close" aria-label="Закрыть">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1069,7 +1069,7 @@ function showFormNotice(message, isError = false) {
         `;
         document.body.appendChild(notice);
 
-        const closeTriggers = notice.querySelectorAll('[data-oporaprava-yr-dismiss], .form-notice__close');
+        const closeTriggers = notice.querySelectorAll('[data-opora-prava-dismiss], .form-notice__close');
         closeTriggers.forEach((trigger) => {
             trigger.addEventListener('click', () => {
                 notice.classList.remove('form-notice--visible');
