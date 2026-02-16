@@ -267,6 +267,45 @@
 .form__group--turnstile { padding-bottom: calc(1.5em + var(--spacing-xs)); position: relative; }
 .form__group--turnstile .turnstile-error { position: absolute; bottom: 0; left: 0; right: 0; margin-top: 0; }
 
+/* Select field for "Сумма потери" */
+select.form__input,
+.form__select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.75rem;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%),
+    linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%),
+    linear-gradient(var(--color-border-light), var(--color-border-light));
+  background-position:
+    calc(100% - 1.1rem) 50%,
+    calc(100% - 0.8rem) 50%,
+    calc(100% - 2rem) 50%;
+  background-size: 6px 6px, 6px 6px, 1px 1.2rem;
+  background-repeat: no-repeat;
+}
+
+select.form__input:focus,
+.form__select:focus {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-gold) 50%),
+    linear-gradient(135deg, var(--color-gold) 50%, transparent 50%),
+    linear-gradient(var(--color-gold), var(--color-gold));
+}
+
+select.form__input:invalid,
+.form__select:invalid {
+  color: var(--color-text-muted);
+}
+
+select.form__input option,
+.form__select option {
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
 html,body{overflow-x:hidden}
 main{overflow-x:hidden}
 

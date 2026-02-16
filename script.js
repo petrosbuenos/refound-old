@@ -930,6 +930,12 @@ const validators = {
         }
         return '';
     },
+    lossAmount: (value) => {
+        if (!value || value.trim().length === 0) {
+            return 'Выберите, пожалуйста, сумму потери';
+        }
+        return '';
+    },
     message: (value) => {
         if (!value || value.trim().length === 0) {
             return ''; // Повідомлення не обов'язкове поле
@@ -1009,7 +1015,7 @@ function validateField(input) {
 
 // Функція для валідації всієї форми
 function validateForm(form) {
-    const inputs = form.querySelectorAll('input[name], textarea[name]');
+    const inputs = form.querySelectorAll('input[name], textarea[name], select[name]');
     let isValid = true;
     
     inputs.forEach(input => {
@@ -1025,10 +1031,15 @@ function validateForm(form) {
 forms.forEach(form => {
     if (!form) return;
     
-    const inputs = form.querySelectorAll('input[name], textarea[name]');
+    const inputs = form.querySelectorAll('input[name], textarea[name], select[name]');
     inputs.forEach(input => {
         // Валідація при втраті фокусу
         input.addEventListener('blur', () => {
+            validateField(input);
+        });
+
+        // Для select надійніше перевіряти по зміні значення
+        input.addEventListener('change', () => {
             validateField(input);
         });
         
@@ -1153,7 +1164,7 @@ forms.forEach(form => {
         });
 
         if (!trackingPayload['Conversion Name']) {
-            trackingPayload['Conversion Name'] = 'Lead_Opora_Prava_YR';
+            trackingPayload['Conversion Name'] = 'Lead_Opora_Prava';
         }
 
         if (!trackingPayload['Conversion Value']) {
