@@ -1193,12 +1193,13 @@ forms.forEach(form => {
             ...trackingPayload,
         };
 
-        // Блокуємо кнопку відправки
+        // Блокуємо кнопку та показуємо анімацію завантаження
         const submitButton = form.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton?.textContent;
+        const originalButtonHTML = submitButton?.innerHTML;
         if (submitButton) {
             submitButton.disabled = true;
-            submitButton.textContent = 'Отправляем...';
+            submitButton.classList.add('btn--loading');
+            submitButton.innerHTML = '<span class="btn__spinner" aria-hidden="true"></span> Отправляем...';
         }
 
         try {
@@ -1250,10 +1251,11 @@ forms.forEach(form => {
             console.error('Form submit error:', error);
             showFormNotice('Ошибка при отправке. Попробуйте, пожалуйста, ещё раз.', true);
         } finally {
-            // Розблоковуємо кнопку відправки
+            // Розблоковуємо кнопку та прибираємо анімацію
             if (submitButton) {
                 submitButton.disabled = false;
-                submitButton.textContent = originalButtonText || 'Отправить';
+                submitButton.classList.remove('btn--loading');
+                submitButton.innerHTML = originalButtonHTML || 'Отправить';
             }
         }
     });

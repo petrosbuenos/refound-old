@@ -317,6 +317,27 @@ select.form__input option,
   background-color: var(--color-surface);
 }
 
+/* Submit button loading state */
+.btn--loading {
+  pointer-events: none;
+  cursor: wait;
+  position: relative;
+}
+.btn--loading .btn__spinner {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.5rem;
+  vertical-align: -0.2em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.7s linear infinite;
+}
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
 html,body{overflow-x:hidden}
 main{overflow-x:hidden}
 
