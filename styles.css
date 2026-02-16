@@ -309,6 +309,15 @@ select.form__input:invalid,
 .form__select:invalid {
   color: var(--color-text-muted);
   border-color: var(--color-border-light);
+  outline: none;
+  box-shadow: var(--shadow-inner);
+}
+
+/* Поле суми потери — без червоного виділення при помилці */
+select.form__input.form__input--error,
+.form__select.form__input--error {
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-inner);
 }
 
 select.form__input option,
