@@ -122,11 +122,11 @@ function getDayKeyFromCellValue_(v) {
 function formatAllDaysInSheet_(sheet) {
   var HEADER_ROW = 1;
   var CONV_TIME_COL = 8;
+  var FORMAT_END_COL = 15;  // колонка O — форматування тільки до O, P не виділяється
   var HIGHLIGHT_COLOR = "#fff2cc";
 
   var lastRow = sheet.getLastRow();
-  var lastCol = sheet.getLastColumn();
-  if (lastRow <= HEADER_ROW || lastCol < CONV_TIME_COL) return;
+  if (lastRow <= HEADER_ROW) return;
 
   var numDataRows = lastRow - HEADER_ROW;
   var convTimes = sheet.getRange(HEADER_ROW + 1, CONV_TIME_COL, numDataRows, 1).getValues();
@@ -142,15 +142,15 @@ function formatAllDaysInSheet_(sheet) {
     }
   }
 
-  // Спочатку знімаємо всю підсвітку та рамки з області даних
-  var dataRange = sheet.getRange(HEADER_ROW + 1, 1, numDataRows, lastCol);
+  // Знімаємо підсвітку та рамки тільки з колонок A–O
+  var dataRange = sheet.getRange(HEADER_ROW + 1, 1, numDataRows, FORMAT_END_COL);
   dataRange.setBackground(null);
   dataRange.setBorder(null, null, false, null, null, null);
 
-  // Підсвічуємо останній рядок кожної доби і ставимо нижню рамку
+  // Підсвічуємо останній рядок кожної доби (тільки колонки A–O)
   for (var dayKey in lastRowByDay) {
     var targetRow = lastRowByDay[dayKey];
-    var r = sheet.getRange(targetRow, 1, 1, lastCol);
+    var r = sheet.getRange(targetRow, 1, 1, FORMAT_END_COL);
     r.setBackground(HIGHLIGHT_COLOR);
     r.setBorder(null, null, true, null, null, null);
   }
