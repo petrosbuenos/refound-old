@@ -662,6 +662,9 @@ const phoneInstances = new Map();
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBoismlL2vju4GaWJtLuDLmFkQtzdf9WO1cOtPMVqFmBkgXWG0joJaXRIMEEsetKpieA/exec';
 const GCLID_STORAGE_KEY = 'opora_prava_gclid';
 
+// Сумми потерь, при которых форма НЕ отправляется и Google-тег НЕ срабатывает (только показ "успеха")
+const LOW_VALUE_AMOUNTS = ['1-100$', '100-1.000$'];
+
 // Cloudflare Turnstile Site Key (замініть на свій ключ)
 const TURNSTILE_SITE_KEY = '0x4AAAAAACYpe5iZG3zFKbyk';
 
@@ -1130,6 +1133,28 @@ forms.forEach(form => {
         const turnstileError = form.querySelector('.turnstile-error');
         if (turnstileError) {
             turnstileError.textContent = '';
+        }
+
+        const lossAmountSelect = form.querySelector('select[name="lossAmount"]');
+        const lossAmount = lossAmountSelect?.value || '';
+
+        if (LOW_VALUE_AMOUNTS.includes(lossAmount)) {
+            showFormNotice('Благодарим! Мы свяжемся с вами в ближайшее время.');
+            if (form === popupForm) {
+                closePopup();
+            }
+            form.querySelectorAll('.form__input').forEach(input => {
+                input.classList.remove('form__input--error', 'form__input--valid');
+                input.setAttribute('aria-invalid', 'false');
+            });
+            form.querySelectorAll('.form__error').forEach(error => {
+                error.textContent = '';
+            });
+            const turnstileErr = form.querySelector('.turnstile-error');
+            if (turnstileErr) turnstileErr.textContent = '';
+            form.reset();
+            resetTurnstile(form);
+            return;
         }
 
         const gclidValue = getGclidFromUrl();
